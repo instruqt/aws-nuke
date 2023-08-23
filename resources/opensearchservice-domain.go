@@ -5,7 +5,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/opensearchservice"
-	"github.com/rebuy-de/aws-nuke/v2/pkg/types"
+	"github.com/instruqt/aws-nuke/v2/pkg/types"
 )
 
 type OSDomain struct {
