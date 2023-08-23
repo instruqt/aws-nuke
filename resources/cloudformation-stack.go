@@ -33,9 +33,10 @@ func ListCloudFormationStacks(sess *session.Session) ([]Resource, error) {
 			return nil, err
 		}
 		for _, stack := range resp.Stacks {
-			if aws.StringValue(stack.ParentId) != "" {
-				continue
-			}
+			// Commented in order to delete childs of a nested CloudFormationStack
+			// if aws.StringValue(stack.ParentId) != "" {
+			// 	continue
+			// }
 			resources = append(resources, &CloudFormationStack{
 				svc:               svc,
 				stack:             stack,
