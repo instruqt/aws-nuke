@@ -1,6 +1,8 @@
 package resources
 
 import (
+	"time"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/redshift"
@@ -48,8 +50,13 @@ func ListRedshiftSnapshots(sess *session.Session) ([]Resource, error) {
 }
 
 func (f *RedshiftSnapshot) Properties() types.Properties {
+	var createdTime string
+	if f.snapshot.SnapshotCreateTime != nil {
+		createdTime = f.snapshot.SnapshotCreateTime.Format(time.RFC3339)
+	}
+
 	properties := types.NewProperties().
-		Set("CreatedTime", f.snapshot.SnapshotCreateTime)
+		Set("CreatedTime", createdTime)
 
 	for _, tag := range f.snapshot.Tags {
 		properties.SetTag(tag.Key, tag.Value)
