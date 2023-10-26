@@ -100,6 +100,9 @@ func resolverRulesToVpcIDs(svc *route53resolver.Route53Resolver) (map[string][]*
 
 // Filter removes resources automatically from being nuked
 func (r *Route53ResolverRule) Filter() error {
+	if r == nil || r.domainName == nil {
+		return fmt.Errorf(`Filtering DomainName or Resolver Rule is nil`)
+	}
 	if *r.domainName == "." {
 		return fmt.Errorf(`Filtering DomainName "."`)
 	}
