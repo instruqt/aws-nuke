@@ -32,13 +32,9 @@ func NewNuke(params NukeParameters, account awsutil.Account) *Nuke {
 
 func (n *Nuke) Run() error {
 	var err error
-
-	if n.Parameters.ForceSleep < 3 && n.Parameters.NoDryRun {
-		return fmt.Errorf("Value for --force-sleep cannot be less than 3 seconds if --no-dry-run is set. This is for your own protection.")
-	}
-	forceSleep := time.Duration(n.Parameters.ForceSleep) * time.Second
-
 	fmt.Printf("aws-nuke version %s - %s - %s\n\n", BuildVersion, BuildDate, BuildHash)
+
+	forceSleep := time.Duration(n.Parameters.ForceSleep) * time.Second
 
 	err = n.Config.ValidateAccount(n.Account.ID(), n.Account.Aliases())
 	if err != nil {
