@@ -228,7 +228,7 @@ func skipGlobalHandler(global bool) func(r *request.Request) {
 		if service == s3control.ServiceName {
 			service = s3control.EndpointsID
 			// Rewrite S3 Control ServiceName to proper EndpointsID
-			// https://github.com/instruqt/aws-nuke/issues/708
+			// https://github.com/rebuy-de/aws-nuke/issues/708
 		}
 		rs, ok := endpoints.RegionsForService(endpoints.DefaultPartitions(), DefaultAWSPartitionID, service)
 		if !ok {
