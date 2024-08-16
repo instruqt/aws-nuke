@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/instruqt/aws-nuke/v2/pkg/types"
+	"github.com/rebuy-de/aws-nuke/v2/pkg/types"
 
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"

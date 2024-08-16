@@ -5,7 +5,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/sts"
-	"github.com/instruqt/aws-nuke/v2/pkg/config"
+	"github.com/rebuy-de/aws-nuke/v2/pkg/config"
 	"github.com/pkg/errors"
 )
 

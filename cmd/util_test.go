@@ -5,7 +5,7 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/instruqt/aws-nuke/v2/pkg/types"
+	"github.com/rebuy-de/aws-nuke/v2/pkg/types"
 )
 
 func TestResolveResourceTypes(t *testing.T) {

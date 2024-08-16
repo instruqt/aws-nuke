@@ -8,8 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudcontrolapi"
 	"github.com/google/uuid"
-	"github.com/instruqt/aws-nuke/v2/pkg/types"
 	"github.com/pkg/errors"
+	"github.com/rebuy-de/aws-nuke/v2/pkg/types"
 	"github.com/sirupsen/logrus"
 )
 
