@@ -30,6 +30,7 @@ func NewNuke(params NukeParameters, account awsutil.Account) *Nuke {
 
 	// Set the logger to use JSONFormatter
 	logrus.SetFormatter(joonix.NewFormatter())
+	logrus.WithFields(params.Metadata)
 
 	// Ensure global logger uses default fields by adding a hook
 	logrus.AddHook(&metadataHook{
