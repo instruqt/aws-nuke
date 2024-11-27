@@ -8,6 +8,7 @@ import (
 	"github.com/instruqt/aws-nuke/v2/pkg/config"
 	"github.com/instruqt/aws-nuke/v2/pkg/types"
 	"github.com/instruqt/aws-nuke/v2/resources"
+	joonix "github.com/joonix/log"
 	"github.com/sirupsen/logrus"
 )
 
@@ -27,6 +28,14 @@ func NewNuke(params NukeParameters, account awsutil.Account) *Nuke {
 		Account:    account,
 	}
 
+	// Set the logger to use JSONFormatter
+	logrus.SetFormatter(joonix.NewFormatter())
+
+	// Ensure global logger uses default fields by adding a hook
+	logrus.AddHook(&metadataHook{
+		fields: params.Metadata,
+	})
+
 	return &n
 }
 
@@ -38,20 +47,20 @@ func (n *Nuke) Run() error {
 	}
 	forceSleep := time.Duration(n.Parameters.ForceSleep) * time.Second
 
-	fmt.Printf("aws-nuke version %s - %s - %s\n\n", BuildVersion, BuildDate, BuildHash)
+	logrus.Infof("aws-nuke version %s - %s - %s", BuildVersion, BuildDate, BuildHash)
 
 	err = n.Config.ValidateAccount(n.Account.ID(), n.Account.Aliases())
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Do you really want to nuke the account with "+
-		"the ID %s and the alias '%s'?\n", n.Account.ID(), n.Account.Alias())
+	logrus.Infof("Do you really want to nuke the account with "+
+		"the ID %s and the alias '%s'?", n.Account.ID(), n.Account.Alias())
 	if n.Parameters.Force {
-		fmt.Printf("Waiting %v before continuing.\n", forceSleep)
+		logrus.Debugf("Waiting %v before continuing.", forceSleep)
 		time.Sleep(forceSleep)
 	} else {
-		fmt.Printf("Do you want to continue? Enter account alias to continue.\n")
+		logrus.Info("Do you want to continue? Enter account alias to continue.")
 		err = Prompt(n.Account.Alias())
 		if err != nil {
 			return err
@@ -64,22 +73,22 @@ func (n *Nuke) Run() error {
 	}
 
 	if n.items.Count(ItemStateNew) == 0 {
-		fmt.Println("No resource to delete.")
+		logrus.Warn("No resource to delete.")
 		return nil
 	}
 
 	if !n.Parameters.NoDryRun {
-		fmt.Println("The above resources would be deleted with the supplied configuration. Provide --no-dry-run to actually destroy resources.")
+		logrus.Info("The above resources would be deleted with the supplied configuration. Provide --no-dry-run to actually destroy resources.")
 		return nil
 	}
 
-	fmt.Printf("Do you really want to nuke these resources on the account with "+
-		"the ID %s and the alias '%s'?\n", n.Account.ID(), n.Account.Alias())
+	logrus.Debugf("Do you really want to nuke these resources on the account with "+
+		"the ID %s and the alias '%s'?", n.Account.ID(), n.Account.Alias())
 	if n.Parameters.Force {
-		fmt.Printf("Waiting %v before continuing.\n", forceSleep)
+		logrus.Debugf("Waiting %v before continuing.", forceSleep)
 		time.Sleep(forceSleep)
 	} else {
-		fmt.Printf("Do you want to continue? Enter account alias to continue.\n")
+		logrus.Debug("Do you want to continue? Enter account alias to continue.")
 		err = Prompt(n.Account.Alias())
 		if err != nil {
 			return err
@@ -94,8 +103,7 @@ func (n *Nuke) Run() error {
 
 		if n.items.Count(ItemStatePending, ItemStateWaiting, ItemStateNew) == 0 && n.items.Count(ItemStateFailed) > 0 {
 			if failCount >= 2 {
-				logrus.Errorf("There are resources in failed state, but none are ready for deletion, anymore.")
-				fmt.Println()
+				logrus.Error("There are resources in failed state, but none are ready for deletion, anymore.")
 
 				for _, item := range n.items {
 					if item.State != ItemStateFailed {
@@ -115,7 +123,7 @@ func (n *Nuke) Run() error {
 		}
 		if n.Parameters.MaxWaitRetries != 0 && n.items.Count(ItemStateWaiting, ItemStatePending) > 0 && n.items.Count(ItemStateNew) == 0 {
 			if waitingCount >= n.Parameters.MaxWaitRetries {
-				return fmt.Errorf("Max wait retries of %d exceeded.\n\n", n.Parameters.MaxWaitRetries)
+				return fmt.Errorf("Max wait retries of %d exceeded.", n.Parameters.MaxWaitRetries)
 			}
 			waitingCount = waitingCount + 1
 		} else {
@@ -128,7 +136,7 @@ func (n *Nuke) Run() error {
 		time.Sleep(5 * time.Second)
 	}
 
-	fmt.Printf("Nuke complete: %d failed, %d skipped, %d finished.\n\n",
+	logrus.Infof("Nuke complete: %d failed, %d skipped, %d finished.",
 		n.items.Count(ItemStateFailed), n.items.Count(ItemStateFiltered), n.items.Count(ItemStateFinished))
 
 	return nil
@@ -181,7 +189,7 @@ func (n *Nuke) Scan() error {
 		}
 	}
 
-	fmt.Printf("Scan complete: %d total, %d nukeable, %d filtered.\n\n",
+	logrus.Infof("Scan complete: %d total, %d nukeable, %d filtered.",
 		queue.CountTotal(), queue.Count(ItemStateNew), queue.Count(ItemStateFiltered))
 
 	n.items = queue
@@ -263,8 +271,7 @@ func (n *Nuke) HandleQueue() {
 
 	}
 
-	fmt.Println()
-	fmt.Printf("Removal requested: %d waiting, %d failed, %d skipped, %d finished\n\n",
+	logrus.Infof("Removal requested: %d waiting, %d failed, %d skipped, %d finished",
 		n.items.Count(ItemStateWaiting, ItemStatePending), n.items.Count(ItemStateFailed),
 		n.items.Count(ItemStateFiltered), n.items.Count(ItemStateFinished))
 }
