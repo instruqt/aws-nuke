@@ -18,11 +18,13 @@ type NukeParameters struct {
 	Quiet      bool
 
 	MaxWaitRetries int
+
+	Metadata map[string]any
 }
 
 func (p *NukeParameters) Validate() error {
 	if strings.TrimSpace(p.ConfigPath) == "" {
-		return fmt.Errorf("You have to specify the --config flag.\n")
+		return fmt.Errorf("You have to specify the --config flag.")
 	}
 
 	return nil

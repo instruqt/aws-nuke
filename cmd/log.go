@@ -7,6 +7,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/instruqt/aws-nuke/v2/resources"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -35,28 +36,31 @@ func Sorted(m map[string]string) string {
 	sort.Strings(keys)
 	sorted := make([]string, 0, len(m))
 	for k := range keys {
-		sorted = append(sorted, fmt.Sprintf("%s: \"%s\"", keys[k], m[keys[k]]))
+		sorted = append(sorted, fmt.Sprintf("%s: '%s'", keys[k], m[keys[k]]))
 	}
 	return fmt.Sprintf("[%s]", strings.Join(sorted, ", "))
 }
 
 func Log(region *Region, resourceType string, r resources.Resource, c color.Color, msg string) {
-	ColorRegion.Printf("%s", region.Name)
-	fmt.Printf(" - ")
-	ColorResourceType.Print(resourceType)
-	fmt.Printf(" - ")
+	logMsg := fmt.Sprintf("%s - %s - ", region.Name, resourceType)
 
 	rString, ok := r.(resources.LegacyStringer)
 	if ok {
-		ColorResourceID.Print(rString.String())
-		fmt.Printf(" - ")
+		logMsg += fmt.Sprintf("%s -", rString.String())
 	}
 
 	rProp, ok := r.(resources.ResourcePropertyGetter)
 	if ok {
-		ColorResourceProperties.Print(Sorted(rProp.Properties()))
-		fmt.Printf(" - ")
+		logMsg += fmt.Sprintf("%s -", Sorted(rProp.Properties()))
 	}
 
-	c.Printf("%s\n", msg)
+	logMsg += fmt.Sprintf("%s", msg)
+
+	if c.Equals(&ReasonSuccess) || c.Equals(&ReasonWaitPending) {
+		logrus.Info(logMsg)
+	} else if c.Equals(&ReasonSkip) {
+		logrus.Warn(logMsg)
+	} else if c.Equals(&ReasonError) {
+		logrus.Error(logMsg)
+	}
 }

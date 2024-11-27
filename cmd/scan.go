@@ -46,9 +46,9 @@ func (s *scanner) run(region *Region, resourceTypes []string) {
 func (s *scanner) list(region *Region, resourceType string) {
 	defer func() {
 		if r := recover(); r != nil {
-			err := fmt.Errorf("%v\n\n%s", r.(error), string(debug.Stack()))
+			err := fmt.Errorf("%v - %s", r.(error), string(debug.Stack()))
 			dump := util.Indent(fmt.Sprintf("%v", err), "    ")
-			log.Errorf("Listing %s failed:\n%s", resourceType, dump)
+			log.Errorf("Listing %s failed: %s", resourceType, dump)
 		}
 	}()
 	defer s.semaphore.Release(1)
@@ -73,7 +73,7 @@ func (s *scanner) list(region *Region, resourceType string) {
 		}
 
 		dump := util.Indent(fmt.Sprintf("%v", err), "    ")
-		log.Errorf("Listing %s failed:\n%s", resourceType, dump)
+		log.Errorf("Listing %s failed: %s", resourceType, dump)
 		return
 	}
 
