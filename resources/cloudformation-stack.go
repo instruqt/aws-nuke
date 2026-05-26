@@ -10,12 +10,12 @@ import (
 	"github.com/gotidy/ptr"
 	"github.com/sirupsen/logrus"
 
-	"github.com/aws/aws-sdk-go/aws"                    //nolint:staticcheck
-	"github.com/aws/aws-sdk-go/aws/awserr"             //nolint:staticcheck
-	"github.com/aws/aws-sdk-go/service/cloudformation" //nolint:staticcheck
-	"github.com/aws/aws-sdk-go/service/cloudformation/cloudformationiface"
-	"github.com/aws/aws-sdk-go/service/sts"            //nolint:staticcheck
-	"github.com/aws/aws-sdk-go/service/sts/stsiface"   //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/aws"                                        //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/aws/awserr"                                 //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/cloudformation"                     //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/cloudformation/cloudformationiface" //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/sts"                                //nolint:staticcheck
+	"github.com/aws/aws-sdk-go/service/sts/stsiface"                       //nolint:staticcheck
 
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	iamtypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
@@ -106,24 +106,24 @@ func (l *CloudFormationStackLister) List(_ context.Context, o interface{}) ([]re
 }
 
 type CloudFormationStack struct {
-	svc               cloudformationiface.CloudFormationAPI
-	stsSvc            stsiface.STSAPI
-	iamSvc            iamRoleAPI
-	settings          *settings.Setting
-	logger            *logrus.Entry
-	Name              *string
-	Status            *string
-	CreationTime      *time.Time
-	LastUpdatedTime   *time.Time
-	Tags              []*cloudformation.Tag
-	description       *string
-	parentID          *string
-	roleARN           *string
-	callerRoleARN     *string
+	svc                cloudformationiface.CloudFormationAPI
+	stsSvc             stsiface.STSAPI
+	iamSvc             iamRoleAPI
+	settings           *settings.Setting
+	logger             *logrus.Entry
+	Name               *string
+	Status             *string
+	CreationTime       *time.Time
+	LastUpdatedTime    *time.Time
+	Tags               []*cloudformation.Tag
+	description        *string
+	parentID           *string
+	roleARN            *string
+	callerRoleARN      *string
 	callerRoleResolved bool
-	maxDeleteAttempts int
-	roleCreated       bool
-	roleName          string
+	maxDeleteAttempts  int
+	roleCreated        bool
+	roleName           string
 }
 
 func (r *CloudFormationStack) Filter() error {
@@ -244,7 +244,8 @@ func (r *CloudFormationStack) applyRoleOverride(input *cloudformation.DeleteStac
 		r.logger.Infof("CloudFormationStack stackName=%s UseCurrentRoleToDeleteStack: overriding RoleARN with %s", *r.Name, *callerRole)
 		input.RoleARN = callerRole
 	} else {
-		r.logger.Warnf("CloudFormationStack stackName=%s UseCurrentRoleToDeleteStack is enabled but callerRoleARN could not be resolved, falling back to default role behavior", *r.Name)
+		r.logger.Warnf("CloudFormationStack stackName=%s UseCurrentRoleToDeleteStack enabled "+
+			"but callerRoleARN could not be resolved, falling back to default role behavior", *r.Name)
 	}
 }
 

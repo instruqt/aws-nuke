@@ -807,10 +807,10 @@ func TestCloudformationStack_Remove_UseCurrentRole_EmptySettings(t *testing.T) {
 	mockSts := mock_stsiface.NewMockSTSAPI(ctrl) // no expected calls
 
 	stack := CloudFormationStack{
-		svc:    mockCf,
-		stsSvc: mockSts,
-		logger: logrus.NewEntry(logrus.StandardLogger()),
-		Name:   ptr.String("my-stack"),
+		svc:      mockCf,
+		stsSvc:   mockSts,
+		logger:   logrus.NewEntry(logrus.StandardLogger()),
+		Name:     ptr.String("my-stack"),
 		settings: &libsettings.Setting{},
 	}
 
