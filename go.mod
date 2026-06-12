@@ -29,6 +29,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/mgn v1.37.6
 	github.com/aws/aws-sdk-go-v2/service/neptunegraph v1.17.6
 	github.com/aws/aws-sdk-go-v2/service/networkfirewall v1.53.0
+	github.com/aws/aws-sdk-go-v2/service/qbusiness v1.34.8
 	github.com/aws/aws-sdk-go-v2/service/ram v1.34.19
 	github.com/aws/aws-sdk-go-v2/service/route53profiles v1.4.17
 	github.com/aws/aws-sdk-go-v2/service/route53resolver v1.41.5
@@ -62,7 +63,7 @@ require (
 )
 
 require (
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.8 // indirect
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.10 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.33 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.29 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.29 // indirect
