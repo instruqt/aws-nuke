@@ -60,10 +60,6 @@ func (l *CloudFormationStackLister) List(_ context.Context, o interface{}) ([]re
 	opts := o.(*nuke.ListerOpts)
 
 	svc := cloudformation.New(opts.Session)
-	// IAM is a global service: pin the client to aws-global so the
-	// SkipRegionalForGlobalService middleware lets it through. Needed for
-	// CreateRoleToDeleteStack's role-recovery path, which must call IAM
-	// from this regional stack scanner.
 	iamSvc := iam.NewFromConfig(*opts.Config, func(o *iam.Options) {
 		o.Region = "aws-global"
 	})

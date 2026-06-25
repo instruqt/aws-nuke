@@ -51,9 +51,6 @@ func (l *SSMQuickSetupConfigurationManagerLister) List(ctx context.Context, o in
 	for _, p := range res.ConfigurationManagersList {
 		resources = append(resources, &SSMQuickSetupConfigurationManager{
 			svc: svc,
-			// IAM is a global service: pin the client to aws-global so the
-			// SkipRegionalForGlobalService middleware lets it through.
-			// Needed for CreateRoleToDelete's role-recovery path.
 			iamSvc: iam.NewFromConfig(*opts.Config, func(o *iam.Options) {
 				o.Region = "aws-global"
 			}),
