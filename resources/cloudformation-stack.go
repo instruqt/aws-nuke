@@ -60,6 +60,7 @@ func (l *CloudFormationStackLister) List(_ context.Context, o interface{}) ([]re
 	opts := o.(*nuke.ListerOpts)
 
 	svc := cloudformation.New(opts.Session)
+	// Pinned to aws-global; see awsutil.SkipRegionalForGlobalService.
 	iamSvc := iam.NewFromConfig(*opts.Config, func(o *iam.Options) {
 		o.Region = "aws-global"
 	})

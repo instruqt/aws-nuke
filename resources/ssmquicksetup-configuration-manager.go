@@ -51,6 +51,7 @@ func (l *SSMQuickSetupConfigurationManagerLister) List(ctx context.Context, o in
 	for _, p := range res.ConfigurationManagersList {
 		resources = append(resources, &SSMQuickSetupConfigurationManager{
 			svc: svc,
+			// Pinned to aws-global; see awsutil.SkipRegionalForGlobalService.
 			iamSvc: iam.NewFromConfig(*opts.Config, func(o *iam.Options) {
 				o.Region = "aws-global"
 			}),
