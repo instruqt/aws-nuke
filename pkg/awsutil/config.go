@@ -205,6 +205,14 @@ func (SkipGlobal) HandleInitialize(
 // when operating in a non-global region context. This ensures global
 // services like CloudFront and IAM are only processed once in the
 // "global" pseudo-region rather than in every regional scan.
+//
+// Resources that need a global-service client from a regional scanner
+// (e.g. CloudFormationStack.CreateRoleToDeleteStack recovery) should
+// build the client with Region = "aws-global" to bypass this filter:
+//
+//	iam.NewFromConfig(*opts.Config, func(o *iam.Options) {
+//	    o.Region = "aws-global"
+//	})
 type SkipRegionalForGlobalService struct{}
 
 func (SkipRegionalForGlobalService) ID() string {
