@@ -19,7 +19,6 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	iamtypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
-	"github.com/aws/smithy-go/middleware"
 
 	liberrors "github.com/ekristen/libnuke/pkg/errors"
 	"github.com/ekristen/libnuke/pkg/registry"
@@ -61,17 +60,12 @@ func (l *CloudFormationStackLister) List(_ context.Context, o interface{}) ([]re
 	opts := o.(*nuke.ListerOpts)
 
 	svc := cloudformation.New(opts.Session)
-	// IAM is a global service: pin to aws-global and strip the
-	// SkipRegionalForGlobalService middleware that NewConfig adds to every
-	// regional config (awsutil/config.go:213). Without this, CreateRole
-	// (used by CreateRoleToDeleteStack to rebuild a stack's missing RoleARN)
-	// is refused with "service 'IAM' is global, but the session is not".
+	// IAM is a global service: pin the client to aws-global so the
+	// SkipRegionalForGlobalService middleware lets it through. Needed for
+	// CreateRoleToDeleteStack's role-recovery path, which must call IAM
+	// from this regional stack scanner.
 	iamSvc := iam.NewFromConfig(*opts.Config, func(o *iam.Options) {
 		o.Region = "aws-global"
-		o.APIOptions = append(o.APIOptions, func(stack *middleware.Stack) error {
-			_, _ = stack.Initialize.Remove("aws-nuke::skipRegionalForGlobalService")
-			return nil
-		})
 	})
 	stsSvc := sts.New(opts.Session)
 
